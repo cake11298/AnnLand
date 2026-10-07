@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Ann Land · 安安小寶 21 歲生日快樂 · 10月8號</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { --ink: #4a2a45; --rose: #e8507e; --pink: #ff8fb1; --cream: #fff8f1; --butter: #ffd65c; --lilac: #c4aef2; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #fff0f4; color: var(--ink);
+      font-family: Fredoka, "Noto Sans TC", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+    a { color: var(--rose); } a:hover { color: var(--ink); }
+    #app, #app canvas { position: fixed; inset: 0; display: block; touch-action: none; }
+    button { font: inherit; cursor: pointer; border: 0; }
+    .zh { font-family: "Noto Sans TC", Fredoka, sans-serif; }
+
+    #loading { position: fixed; inset: 0; display: grid; place-items: center; font-size: 22px; color: var(--rose); transition: opacity .5s; }
+    body.ready #loading { opacity: 0; pointer-events: none; }
+
+    #start { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px;
+      background: rgba(255, 240, 245, .55); backdrop-filter: blur(6px); transition: opacity .6s; opacity: 0; pointer-events: none; }
+    body.ready #start { opacity: 1; pointer-events: auto; }
+    body.ready #start.hide { opacity: 0; pointer-events: none; }
+    .card { background: var(--cream); border-radius: 28px; padding: 36px 36px 30px; max-width: 460px; width: 100%;
+      box-shadow: 0 24px 60px -20px rgba(150, 50, 100, .35); text-align: center; }
+    .pill { display: inline-block; background: var(--rose); color: #fff; border-radius: 999px; padding: 6px 16px; font-weight: 700; font-size: 15px; letter-spacing: .04em; }
+    h1 { margin: 16px 0 6px; font-size: 40px; line-height: 1.05; font-weight: 700; color: var(--rose); text-wrap: balance; }
+    .lead { margin: 0 0 22px; font-size: 16px; line-height: 1.6; }
+    .steps { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 10px; text-align: left; }
+    .steps li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; font-size: 15px; line-height: 1.45; }
+    .steps b { width: 30px; height: 30px; border-radius: 50%; background: var(--butter); display: grid; place-items: center; font-family: Fredoka; }
+    .meta { font-size: 13px; opacity: .75; margin: 0 0 6px; }
+    #status { font-size: 15px; color: var(--rose); font-weight: 700; margin: 0 0 20px; }
+    .btn { background: var(--rose); color: #fff; font-weight: 700; font-size: 18px; padding: 14px 34px; border-radius: 999px;
+      box-shadow: 0 6px 0 #b83461; transition: transform .1s, box-shadow .1s; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b83461; }
+    .btn.ghost { background: #fff; color: var(--rose); box-shadow: 0 6px 0 #f2c3d3; }
+
+    #hud { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity .6s; }
+    #hud.show { opacity: 1; }
+    .bar { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .title { background: rgba(255, 248, 241, .92); border-radius: 18px; padding: 10px 16px; line-height: 1.15; }
+    .title strong { display: block; font-size: 18px; color: var(--rose); }
+    .title span { font-size: 13px; }
+    .right { display: flex; gap: 8px; align-items: center; }
+    .gifts { background: rgba(255, 248, 241, .92); border-radius: 18px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+    #gift-dots { display: flex; gap: 5px; }
+    .dot { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--pink); position: relative; transition: background .3s, transform .3s; }
+    .dot.on { background: var(--pink); transform: scale(1.12); }
+    #gift-count { font-weight: 700; font-size: 15px; min-width: 30px; }
+    #mute { pointer-events: auto; background: rgba(255, 248, 241, .92); color: var(--ink); border-radius: 14px; padding: 10px 12px; font-size: 13px; }
+    #hint { position: absolute; top: 76px; left: 50%; transform: translateX(-50%); background: rgba(74, 42, 69, .78); color: #fff;
+      padding: 8px 16px; border-radius: 999px; font-size: 14px; white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
+
+    #hint:empty { display: none; }
+    #note { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 30px); opacity: 0; pointer-events: none;
+      background: var(--cream); border-radius: 22px; padding: 18px 24px; width: min(440px, calc(100% - 32px));
+      box-shadow: 0 18px 40px -16px rgba(150, 50, 100, .45); transition: opacity .35s, transform .35s; }
+    #note.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; cursor: pointer; }
+    #note-label { font-size: 13px; font-weight: 700; color: var(--rose); letter-spacing: .04em; }
+    #note-title { margin-top: 4px; font-size: 22px; font-weight: 700; color: var(--ink); }
+    #note-text { margin-top: 6px; font-size: 17px; line-height: 1.6; }
+    #action { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); display: none; pointer-events: auto;
+      background: var(--butter); color: var(--ink); font-weight: 700; font-size: 16px; padding: 12px 24px; border-radius: 999px; box-shadow: 0 5px 0 #d9a92e; }
+    #action.show { display: block; }
+    #wishmoment { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none; opacity: 0; transition: opacity 1.2s;
+      background: radial-gradient(ellipse at center, rgba(30, 15, 40, .15) 0%, rgba(30, 15, 40, .82) 75%); color: #fff; }
+    #wishmoment.show { opacity: 1; }
+    #wishmoment strong { display: block; font-size: 40px; font-weight: 700; text-shadow: 0 2px 20px rgba(255, 180, 100, .6); }
+    #wishmoment span { display: block; margin-top: 12px; font-size: 18px; color: var(--butter); }
+    #finale-gifts { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    #finale-gifts li { background: #fff; border: 2px dashed var(--pink); color: var(--rose); border-radius: 10px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
+    .gift-head { font-size: 13px; font-weight: 700; color: var(--ink); opacity: .7; margin: 0 0 8px; }
+
+    #prompt { position: fixed; left: 50%; bottom: 150px; transform: translateX(-50%); display: none; touch-action: none; user-select: none;
+      background: var(--rose); color: #fff; font-weight: 700; font-size: 16px; padding: 14px 26px; border-radius: 999px; box-shadow: 0 6px 0 #b83461; max-width: calc(100% - 32px); }
+    #prompt.show { display: block; }
+    #prompt:disabled { background: rgba(74, 42, 69, .82); box-shadow: none; cursor: default; }
+
+    #joy { position: fixed; left: 28px; bottom: 28px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255, 248, 241, .45);
+      border: 3px solid rgba(255, 255, 255, .8); display: none; touch-action: none; pointer-events: auto; }
+    body.touch #hud.show #joy { display: block; }
+    #joy-knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; border-radius: 50%; background: var(--pink); transform: translate(-50%, -50%); box-shadow: 0 4px 0 #d9668d; }
+
+    #finale { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .8s; }
+    #finale.show { opacity: 1; pointer-events: auto; }
+    #finale .card { background: rgba(255, 248, 241, .94); }
+    .big21 { font-size: 112px; line-height: .9; font-weight: 700; color: var(--butter); -webkit-text-stroke: 3px var(--rose); margin: 10px 0 0; }
+    #finale h1 { font-size: 34px; margin-top: 8px; }
+    .finale-msg { font-size: 17px; line-height: 1.7; margin: 8px 0 24px; }
+    .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 560px) {
+      .card { padding: 28px 22px 24px; } h1 { font-size: 32px; }
+      .title span { display: none; } #hint { top: 70px; font-size: 13px; }
+      #prompt { bottom: 170px; font-size: 15px; } #action { bottom: 170px; } #wishmoment strong { font-size: 30px; }
+    }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+  <script type="module" crossorigin src="./assets/index-DHn9mtGU.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading">Ann Land 準備中…</div>
+
+  <div id="start">
+    <div class="card">
+      <span class="pill zh">10月8號</span>
+      <h1>Happy 21st Birthday, Ann</h1>
+      <p class="lead zh">安安小寶，歡迎來到專屬於妳的生日樂園。</p>
+      <ol class="steps zh">
+        <li><b>1</b><span>找到藏在樂園裡、會發光的 8 份禮物</span></li>
+        <li><b>2</b><span>走到樂園中央的大蛋糕前</span></li>
+        <li><b>3</b><span>許個願，按住空白鍵吹熄 21 根蠟燭</span></li>
+        <li><b>♥</b><span>摩天輪和旋轉木馬都可以搭乘喔</span></li>
+      </ol>
+      <p class="meta zh" id="controls"></p>
+      <p id="status" class="zh"></p>
+      <button class="btn zh" id="start-btn">進入樂園</button>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div class="bar">
+      <div class="title"><strong>Ann Land</strong><span class="zh">安安小寶 21 歲生日快樂 · 10月8號</span></div>
+      <div class="right">
+        <div class="gifts"><div id="gift-dots"></div><span id="gift-count">0/8</span></div>
+        <button id="mute" class="zh">音效 開</button>
+      </div>
+    </div>
+    <div id="hint" class="zh">找找看樂園裡發光的禮物吧</div>
+    <div id="joy"><div id="joy-knob"></div></div>
+  </div>
+
+  <div id="note"><div id="note-label" class="zh"></div><div id="note-title" class="zh"></div><div id="note-text" class="zh"></div></div>
+  <button id="prompt" class="zh"></button>
+  <button id="action" class="zh"></button>
+  <div id="wishmoment" class="zh"><div><strong>閉上眼睛，許個願…</strong><span>安安小寶 21 歲的第一個願望</span></div></div>
+
+  <div id="finale">
+    <div class="card">
+      <span class="pill zh">10月8號</span>
+      <div class="big21">21</div>
+      <h1>Happy Birthday, Ann!</h1>
+      <p class="finale-msg zh">安安小寶，21 歲生日快樂。<br>願妳的每一天都像今天一樣，被愛與快樂填滿。</p>
+      <p class="gift-head zh">妳今天收到的禮物</p>
+      <ul id="finale-gifts" class="zh"></ul>
+      <div class="row">
+        <button class="btn ghost zh" id="finale-replay">再唱一次</button>
+        <button class="btn zh" id="finale-close">繼續逛樂園</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
