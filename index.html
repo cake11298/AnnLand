@@ -96,7 +96,33 @@
     .finale-msg { font-size: 17px; line-height: 1.7; margin: 8px 0 24px; }
     .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+    #secret-btn { position: fixed; top: 18px; right: 18px; display: none; align-items: center; gap: 8px; background: rgba(74, 42, 69, .9); color: var(--butter);
+      font-weight: 700; font-size: 14px; letter-spacing: .08em; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 22px -10px rgba(74, 42, 69, .7); transition: transform .15s; }
+    #secret-btn::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--butter); box-shadow: 0 0 10px var(--butter); animation: blink 2.2s infinite; }
+    #secret-btn:hover { transform: translateY(-1px); }
+    body.ready #secret-btn { display: flex; }
+    body.ready #start.hide ~ #secret-btn { display: none; }
+    @keyframes blink { 50% { opacity: .35; } }
+    #secret { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(40, 20, 45, .55); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: opacity .3s; }
+    #secret.show { opacity: 1; pointer-events: auto; }
+    #secret .card { max-width: 440px; }
+    #secret .pill { background: var(--ink); color: var(--butter); letter-spacing: .1em; }
+    #secret h2 { margin: 14px 0 4px; font-size: 24px; color: var(--ink); }
+    .secret-hint { margin: 0 0 18px; font-size: 13px; opacity: .7; }
+    .code { display: flex; justify-content: center; align-items: center; gap: 4px; margin: 0 0 12px; }
+    .code input { width: 46px; height: 54px; border-radius: 12px; border: 2px dashed var(--pink); background: #fff; text-align: center; color: var(--ink);
+      font: 700 22px Fredoka, monospace; text-transform: uppercase; outline: none; padding: 0; transition: border-color .2s, background .2s; }
+    .code input:focus { border-style: solid; border-color: var(--rose); }
+    .code .dash { font: 700 18px Fredoka; color: var(--pink); }
+    #secret.ok .code input { background: var(--butter); border: 2px solid #d9a92e; }
+    #secret.err .code { animation: shake .4s; }
+    @keyframes shake { 20%, 60% { transform: translateX(-7px); } 40%, 80% { transform: translateX(7px); } }
+    #secret-msg { min-height: 22px; margin: 0 0 16px; font-size: 15px; font-weight: 700; color: var(--rose); }
+    #secret.ok #secret-msg { color: var(--ink); }
+
     @media (max-width: 560px) {
+      .code input { width: 38px; height: 48px; font-size: 18px; } .code { gap: 2px; }
       .card { padding: 28px 22px 24px; } h1 { font-size: 32px; }
       .title span { display: none; } #hint { top: 70px; font-size: 13px; }
       #prompt { bottom: 170px; font-size: 15px; } #action { bottom: 170px; } #wishmoment strong { font-size: 30px; }
@@ -105,7 +131,7 @@
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
   </script>
-  <script type="module" crossorigin src="./assets/index-DrvW53j6.js"></script>
+  <script type="module" crossorigin src="./assets/index-BE1igfwX.js"></script>
 </head>
 <body>
   <div id="app"></div>
@@ -125,6 +151,21 @@
       <p class="meta zh" id="controls"></p>
       <p id="status" class="zh"></p>
       <button class="btn zh" id="start-btn">進入樂園</button>
+    </div>
+  </div>
+
+  <button id="secret-btn" class="zh">神秘密碼</button>
+  <div id="secret" role="dialog" aria-label="神秘密碼">
+    <div class="card">
+      <span class="pill zh">神秘密碼</span>
+      <h2 class="zh">輸入密碼，打開另一個世界</h2>
+      <p class="secret-hint zh">6 組 16 進位，每組兩碼</p>
+      <div id="code" class="code"></div>
+      <p id="secret-msg" class="zh"></p>
+      <div class="row">
+        <button class="btn ghost zh" id="secret-cancel">取消</button>
+        <button class="btn zh" id="secret-ok">解鎖</button>
+      </div>
     </div>
   </div>
 
