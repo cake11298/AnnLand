@@ -1,0 +1,25 @@
+{
+  "name": "ann-birthday-land",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A tiny 3D birthday park for Ann's 21st birthday (Oct. 8th), built with three.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "predeploy": "npm test && npm run build",
+    "deploy": "gh-pages -d dist --dotfiles"
+  },
+  "dependencies": {
+    "@elevenlabs/convai-widget-embed": "^0.20.0",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1",
+    "vite": "^8.3.4",
+    "vitest": "^4.1.12"
+  }
+}

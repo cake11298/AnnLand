@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Ann Land · Toronto · Secret Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+  <style>
+    :root { --ink: #4a2a45; --rose: #e8507e; --pink: #ff8fb1; --cream: #fff8f1; --butter: #ffd65c; --mint: #97e0c0; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #2a2f5c; color: var(--ink);
+      font-family: Fredoka, "Noto Sans TC", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+    a { color: var(--rose); } a:hover { color: var(--ink); }
+    #app, #app canvas { position: fixed; inset: 0; display: block; touch-action: none; }
+    button { font: inherit; cursor: pointer; border: 0; }
+    .zh { font-family: "Noto Sans TC", Fredoka, sans-serif; }
+
+    #loading { position: fixed; inset: 0; display: grid; place-items: center; font-size: 22px; color: var(--butter); transition: opacity .5s; }
+    body.ready #loading { opacity: 0; pointer-events: none; }
+    #start { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(30, 24, 50, .35);
+      backdrop-filter: blur(4px); transition: opacity .6s; opacity: 0; pointer-events: none; }
+    body.ready #start { opacity: 1; pointer-events: auto; }
+    body.ready #start.hide { opacity: 0; pointer-events: none; }
+    .card { background: var(--cream); border-radius: 28px; padding: 34px 34px 28px; max-width: 470px; width: 100%;
+      box-shadow: 0 24px 60px -20px rgba(20, 10, 40, .55); text-align: center; }
+    .pill { display: inline-block; background: var(--ink); color: var(--butter); border-radius: 999px; padding: 6px 16px; font-weight: 700; font-size: 14px; letter-spacing: .08em; }
+    h1 { margin: 14px 0 6px; font-size: 40px; line-height: 1.05; font-weight: 700; color: var(--rose); text-wrap: balance; }
+    .lead { margin: 0 0 20px; font-size: 16px; line-height: 1.65; text-wrap: pretty; }
+    .steps { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 10px; text-align: left; }
+    .steps li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; font-size: 15px; line-height: 1.45; }
+    .steps b { width: 30px; height: 30px; border-radius: 50%; background: var(--butter); display: grid; place-items: center; font-family: Fredoka; }
+    .meta { font-size: 13px; opacity: .75; margin: 0 0 20px; }
+    .row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { background: var(--rose); color: #fff; font-weight: 700; font-size: 18px; padding: 14px 32px; border-radius: 999px; text-decoration: none;
+      box-shadow: 0 6px 0 #b83461; transition: transform .1s, box-shadow .1s; display: inline-block; }
+    .btn:hover { transform: translateY(-1px); color: #fff; }
+    .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b83461; }
+    .btn.ghost { background: #fff; color: var(--rose); box-shadow: 0 6px 0 #f2c3d3; }
+
+    #hud { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity .6s; }
+    #hud.show { opacity: 1; }
+    .bar { position: absolute; top: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .left { display: grid; gap: 8px; justify-items: start; }
+    .title { background: rgba(255, 248, 241, .92); border-radius: 18px; padding: 10px 16px; line-height: 1.15; }
+    .title strong { display: block; font-size: 18px; color: var(--rose); }
+    .title span { font-size: 13px; }
+    .chip { pointer-events: auto; background: rgba(255, 248, 241, .92); color: var(--ink); border-radius: 14px; padding: 9px 12px; font-size: 13px; text-decoration: none; }
+    .chip:hover { color: var(--rose); }
+    .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+    .right { display: grid; gap: 10px; justify-items: end; }
+    .stamps { background: rgba(255, 248, 241, .92); border-radius: 18px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; }
+    .stamps small { font-size: 12px; font-weight: 700; opacity: .7; }
+    #stamp-dots { display: flex; gap: 5px; }
+    .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--rose); transition: background .3s, transform .3s; }
+    .dot.on { background: var(--mint); border-color: #4fae86; transform: scale(1.12); }
+    #stamp-count { font-weight: 700; font-size: 15px; min-width: 28px; }
+    #mini { width: 168px; height: 168px; border-radius: 50%; box-shadow: 0 10px 26px -10px rgba(0, 0, 0, .6); }
+    #hint { position: absolute; top: 76px; left: 50%; transform: translateX(-50%); background: rgba(74, 42, 69, .8); color: #fff;
+      padding: 8px 16px; border-radius: 999px; font-size: 14px; white-space: nowrap; max-width: calc(100% - 400px); overflow: hidden; text-overflow: ellipsis; }
+    #hint:empty { display: none; }
+    #place { position: absolute; left: 20px; bottom: 22px; color: #fff; text-shadow: 0 2px 6px rgba(0, 0, 0, .6), 0 0 2px rgba(0, 0, 0, .8); }
+    #place-district { font-size: 20px; font-weight: 700; letter-spacing: .02em; }
+    #place-street { font-size: 14px; opacity: .92; margin-top: 2px; }
+    #district-pop { position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); text-align: center; color: #fff; opacity: 0;
+      text-shadow: 0 3px 14px rgba(0, 0, 0, .55), 0 0 3px rgba(0, 0, 0, .7); }
+    #district-pop.show { animation: pop 3.2s ease forwards; }
+    #district-pop strong { display: block; font-size: 44px; font-weight: 700; font-style: italic; letter-spacing: .01em; }
+    #district-pop span { display: block; font-size: 20px; margin-top: 4px; color: var(--butter); }
+    @keyframes pop { 0% { opacity: 0; transform: translate(-50%, -40%); } 12%, 75% { opacity: 1; transform: translate(-50%, -50%); } 100% { opacity: 0; transform: translate(-50%, -54%); } }
+
+    #note { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 30px); opacity: 0; pointer-events: none;
+      background: var(--cream); border-radius: 22px; padding: 18px 24px; width: min(440px, calc(100% - 32px));
+      box-shadow: 0 18px 40px -16px rgba(20, 10, 40, .55); transition: opacity .35s, transform .35s; }
+    #note.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; cursor: pointer; }
+    #note-label { font-size: 13px; font-weight: 700; color: var(--rose); letter-spacing: .04em; }
+    #note-title { margin-top: 4px; font-size: 22px; font-weight: 700; }
+    #note-text { margin-top: 6px; font-size: 17px; line-height: 1.6; }
+    #note-text:empty { display: none; }
+    #action { position: fixed; left: 50%; bottom: 150px; transform: translateX(-50%); display: none; pointer-events: auto;
+      background: var(--butter); color: var(--ink); font-weight: 700; font-size: 16px; padding: 12px 24px; border-radius: 999px; box-shadow: 0 5px 0 #d9a92e; }
+    #action.show { display: block; }
+
+    #joy { position: fixed; left: 28px; bottom: 28px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255, 248, 241, .35);
+      border: 3px solid rgba(255, 255, 255, .8); display: none; touch-action: none; pointer-events: auto; }
+    body.touch #hud.show #joy { display: block; }
+    body.touch #place { bottom: auto; top: 128px; left: 16px; }
+    body.touch #place-district { font-size: 15px; }
+    #joy-knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; border-radius: 50%; background: var(--pink); transform: translate(-50%, -50%); box-shadow: 0 4px 0 #d9668d; }
+
+    @media (max-width: 640px) {
+      .card { padding: 26px 20px 22px; } h1 { font-size: 32px; }
+      .title span { display: none; } #mini { width: 118px; height: 118px; }
+      #hint { top: auto; bottom: 210px; max-width: calc(100% - 32px); font-size: 13px; }
+      #district-pop strong { font-size: 30px; } #district-pop span { font-size: 16px; }
+      .stamps small { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading" class="zh">城市載入中…</div>
+
+  <div id="start">
+    <div class="card">
+      <span class="pill">SECRET MAP · TORONTO</span>
+      <h1>Ann 的城市</h1>
+      <p class="lead zh">密碼對了。這是 Ann Land 的另一面：一座更真實的城市，街道、電車、湖邊的碼頭，都可以自由走走。</p>
+      <ol class="steps zh">
+        <li><b>1</b><span>跟著小地圖上的粉紅點，蒐集 6 個城市印章</span></li>
+        <li><b>2</b><span>在 King St 搭 504 路面電車，或爬上塔頂看整座城市</span></li>
+        <li><b>3</b><span>過馬路小心，車子會按喇叭喔</span></li>
+      </ol>
+      <p class="meta zh" id="controls"></p>
+      <div class="row">
+        <a class="btn ghost zh" href="./index.html">回到樂園</a>
+        <button class="btn zh" id="start-btn">開始探索</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div class="bar">
+      <div class="left">
+        <div class="title"><strong>Ann Land · Toronto</strong><span>秘密地圖 · Happy 21st Birthday</span></div>
+        <div class="tools">
+          <a class="chip zh" href="./index.html">← 回到樂園</a>
+          <button class="chip zh" id="time">黃昏</button>
+          <button class="chip zh" id="mute">音效 開</button>
+          <a class="chip zh" href="./index.html?lock">重新上鎖</a>
+        </div>
+      </div>
+      <div class="right">
+        <div class="stamps"><small class="zh">城市印章</small><div id="stamp-dots"></div><span id="stamp-count">0/6</span></div>
+        <canvas id="mini"></canvas>
+      </div>
+    </div>
+    <div id="hint" class="zh"></div>
+    <div id="district-pop"><strong></strong><span class="zh"></span></div>
+    <div id="place"><div id="place-district" class="zh"></div><div id="place-street"></div></div>
+    <div id="joy"><div id="joy-knob"></div></div>
+  </div>
+
+  <div id="note"><div id="note-label" class="zh"></div><div id="note-title" class="zh"></div><div id="note-text" class="zh"></div></div>
+  <button id="action" class="zh"></button>
+
+  <script type="module" src="./src/city/main.js"></script>
+</body>
+</html>
