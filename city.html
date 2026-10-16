@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Ann Land · Toronto · Secret Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>:root{--ink:#4a2a45;--rose:#e8507e;--pink:#ff8fb1;--cream:#fff8f1;--butter:#ffd65c;--mint:#97e0c0}*{box-sizing:border-box}html,body{height:100%;color:var(--ink);-webkit-tap-highlight-color:transparent;background:#2a2f5c;margin:0;font-family:Fredoka,Noto Sans TC,system-ui,sans-serif;overflow:hidden}a{color:var(--rose)}a:hover{color:var(--ink)}#app,#app canvas{touch-action:none;display:block;position:fixed;inset:0}button{font:inherit;cursor:pointer;border:0}.zh{font-family:Noto Sans TC,Fredoka,sans-serif}#loading{color:var(--butter);place-items:center;font-size:22px;transition:opacity .5s;display:grid;position:fixed;inset:0}body.ready #loading{opacity:0;pointer-events:none}#start{-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;pointer-events:none;background:#1e183259;place-items:center;padding:20px;transition:opacity .6s;display:grid;position:fixed;inset:0}body.ready #start{opacity:1;pointer-events:auto}body.ready #start.hide{opacity:0;pointer-events:none}.card{background:var(--cream);text-align:center;border-radius:28px;width:100%;max-width:470px;padding:34px 34px 28px;box-shadow:0 24px 60px -20px #140a288c}.pill{background:var(--ink);color:var(--butter);letter-spacing:.08em;border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;display:inline-block}h1{color:var(--rose);text-wrap:balance;margin:14px 0 6px;font-size:40px;font-weight:700;line-height:1.05}.lead{text-wrap:pretty;margin:0 0 20px;font-size:16px;line-height:1.65}.steps{text-align:left;gap:10px;margin:0 0 16px;padding:0;list-style:none;display:grid}.steps li{grid-template-columns:30px 1fr;align-items:center;gap:12px;font-size:15px;line-height:1.45;display:grid}.steps b{background:var(--butter);border-radius:50%;place-items:center;width:30px;height:30px;font-family:Fredoka;display:grid}.meta{opacity:.75;margin:0 0 20px;font-size:13px}.row{flex-wrap:wrap;justify-content:center;gap:12px;display:flex}.btn{background:var(--rose);color:#fff;border-radius:999px;padding:14px 32px;font-size:18px;font-weight:700;text-decoration:none;transition:transform .1s,box-shadow .1s;display:inline-block;box-shadow:0 6px #b83461}.btn:hover{color:#fff;transform:translateY(-1px)}.btn:active{transform:translateY(4px);box-shadow:0 2px #b83461}.btn.ghost{color:var(--rose);background:#fff;box-shadow:0 6px #f2c3d3}#hud{pointer-events:none;opacity:0;transition:opacity .6s;position:fixed;inset:0}#hud.show{opacity:1}.bar{justify-content:space-between;align-items:flex-start;gap:12px;display:flex;position:absolute;top:16px;left:16px;right:16px}.left{justify-items:start;gap:8px;display:grid}.title{background:#fff8f1eb;border-radius:18px;padding:10px 16px;line-height:1.15}.title strong{color:var(--rose);font-size:18px;display:block}.title span{font-size:13px}.chip{pointer-events:auto;color:var(--ink);background:#fff8f1eb;border-radius:14px;padding:9px 12px;font-size:13px;text-decoration:none}.chip:hover{color:var(--rose)}.tools{flex-wrap:wrap;gap:6px;display:flex}.right{justify-items:end;gap:10px;display:grid}.stamps{background:#fff8f1eb;border-radius:18px;align-items:center;gap:10px;padding:9px 14px;display:flex}.stamps small{opacity:.7;font-size:12px;font-weight:700}#stamp-dots{gap:5px;display:flex}.dot{border:2px solid var(--rose);border-radius:50%;width:14px;height:14px;transition:background .3s,transform .3s}.dot.on{background:var(--mint);border-color:#4fae86;transform:scale(1.12)}#stamp-count{min-width:28px;font-size:15px;font-weight:700}#mini{border-radius:50%;width:168px;height:168px;box-shadow:0 10px 26px -10px #0009}#hint{color:#fff;white-space:nowrap;text-overflow:ellipsis;background:#4a2a45cc;border-radius:999px;max-width:calc(100% - 400px);padding:8px 16px;font-size:14px;position:absolute;top:76px;left:50%;overflow:hidden;transform:translate(-50%)}#hint:empty{display:none}#place{color:#fff;text-shadow:0 2px 6px #0009,0 0 2px #000c;position:absolute;bottom:22px;left:20px}#place-district{letter-spacing:.02em;font-size:20px;font-weight:700}#place-street{opacity:.92;margin-top:2px;font-size:14px}#district-pop{text-align:center;color:#fff;opacity:0;text-shadow:0 3px 14px #0000008c,0 0 3px #000000b3;position:absolute;top:30%;left:50%;transform:translate(-50%,-50%)}#district-pop.show{animation:3.2s forwards pop}#district-pop strong{letter-spacing:.01em;font-size:44px;font-style:italic;font-weight:700;display:block}#district-pop span{color:var(--butter);margin-top:4px;font-size:20px;display:block}@keyframes pop{0%{opacity:0;transform:translate(-50%,-40%)}12%,75%{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,-54%)}}#note{opacity:0;pointer-events:none;background:var(--cream);border-radius:22px;width:min(440px,100% - 32px);padding:18px 24px;transition:opacity .35s,transform .35s;position:fixed;bottom:28px;left:50%;transform:translate(-50%,30px);box-shadow:0 18px 40px -16px #140a288c}#note.show{opacity:1;pointer-events:auto;cursor:pointer;transform:translate(-50%)}#note-label{color:var(--rose);letter-spacing:.04em;font-size:13px;font-weight:700}#note-title{margin-top:4px;font-size:22px;font-weight:700}#note-text{margin-top:6px;font-size:17px;line-height:1.6}#note-text:empty{display:none}#action{pointer-events:auto;background:var(--butter);color:var(--ink);border-radius:999px;padding:12px 24px;font-size:16px;font-weight:700;display:none;position:fixed;bottom:150px;left:50%;transform:translate(-50%);box-shadow:0 5px #d9a92e}#action.show{display:block}#joy{touch-action:none;pointer-events:auto;background:#fff8f159;border:3px solid #fffc;border-radius:50%;width:120px;height:120px;display:none;position:fixed;bottom:28px;left:28px}body.touch #hud.show #joy{display:block}body.touch #place{top:128px;bottom:auto;left:16px}body.touch #place-district{font-size:15px}#joy-knob{background:var(--pink);border-radius:50%;width:52px;height:52px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 4px #d9668d}@media (max-width:640px){.card{padding:26px 20px 22px}h1{font-size:32px}.title span{display:none}#mini{width:118px;height:118px}#hint{max-width:calc(100% - 32px);font-size:13px;top:auto;bottom:210px}#district-pop strong{font-size:30px}#district-pop span{font-size:16px}.stamps small{display:none}}</style>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+  <script type="module" crossorigin src="./assets/city-Cfla5AC8.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/voiceAgent-BU01BDX2.js">
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading" class="zh">城市載入中…</div>
+
+  <div id="start">
+    <div class="card">
+      <span class="pill">SECRET MAP · TORONTO</span>
+      <h1>Ann 的城市</h1>
+      <p class="lead zh">密碼對了。這是 Ann Land 的另一面：一座更真實的城市，街道、電車、湖邊的碼頭，都可以自由走走。</p>
+      <ol class="steps zh">
+        <li><b>1</b><span>跟著小地圖上的粉紅點，蒐集 6 個城市印章</span></li>
+        <li><b>2</b><span>在 King St 搭 504 路面電車，或爬上塔頂看整座城市</span></li>
+        <li><b>3</b><span>過馬路小心，車子會按喇叭喔</span></li>
+      </ol>
+      <p class="meta zh" id="controls"></p>
+      <div class="row">
+        <a class="btn ghost zh" href="./index.html">回到樂園</a>
+        <button class="btn zh" id="start-btn">開始探索</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div class="bar">
+      <div class="left">
+        <div class="title"><strong>Ann Land · Toronto</strong><span>秘密地圖 · Happy 21st Birthday</span></div>
+        <div class="tools">
+          <a class="chip zh" href="./index.html">← 回到樂園</a>
+          <button class="chip zh" id="time">黃昏</button>
+          <button class="chip zh" id="mute">音效 開</button>
+          <a class="chip zh" href="./index.html?lock">重新上鎖</a>
+        </div>
+      </div>
+      <div class="right">
+        <div class="stamps"><small class="zh">城市印章</small><div id="stamp-dots"></div><span id="stamp-count">0/6</span></div>
+        <canvas id="mini"></canvas>
+      </div>
+    </div>
+    <div id="hint" class="zh"></div>
+    <div id="district-pop"><strong></strong><span class="zh"></span></div>
+    <div id="place"><div id="place-district" class="zh"></div><div id="place-street"></div></div>
+    <div id="joy"><div id="joy-knob"></div></div>
+  </div>
+
+  <div id="note"><div id="note-label" class="zh"></div><div id="note-title" class="zh"></div><div id="note-text" class="zh"></div></div>
+  <button id="action" class="zh"></button>
+
+</body>
+</html>
